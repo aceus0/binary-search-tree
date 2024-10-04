@@ -24,7 +24,7 @@ function BinarySearchTree(array) {
     return root;
   };
 
-  const root = buildTree(array);
+  let root = buildTree(array);
 
   //Traverses the tree by comapring value to be added with the node.value and then determining to travel left or right.
   const insert = (value, node = root) => {
@@ -87,7 +87,6 @@ function BinarySearchTree(array) {
     } else if (node.data == value) {
       console.log(node);
       return node;
-      v;
     } else if (node.data > value) {
       node.left = find(value, node.left);
     } else if (node.data < value) {
@@ -184,6 +183,31 @@ function BinarySearchTree(array) {
     return -1;
   };
 
+  const isBalanced = (node = root) => {
+    const leftHeight = height(node.left);
+    const rightHeight = height(node.right);
+
+    const difference = leftHeight - rightHeight;
+
+    if (difference == 1 || difference == -1 || difference == 0) {
+      console.log("Tree is balanced.");
+    } else {
+      console.log("Tree is not balanced.");
+    }
+  };
+
+  const rebalance = () => {
+    const levelOrderedTable = levelOrder(root);
+    let allNodeArray = [];
+    for (let array of levelOrderedTable) {
+      allNodeArray = allNodeArray.concat(array);
+    }
+    let sortedArray = allNodeArray.sort(function (a, b) {
+      return a - b;
+    });
+    root = buildTree(sortedArray);
+  };
+
   const prettyPrint = (node, prefix = "", isLeft = true) => {
     if (node === null) {
       return;
@@ -197,23 +221,59 @@ function BinarySearchTree(array) {
     }
   };
 
-  // let yo = insert(56);
-  prettyPrint(root);
-  // let uo = deleteItem(23);
-  // let a = find(5);
-  // prettyPrint(root);
-  inOrder(root);
-  preOrder(root);
-  postOrder(root);
-  console.log(height(root));
-  console.log(depth(root, 67));
-  // console.log(levelOrder(root));
+  return {
+    insert,
+    deleteItem,
+    find,
+    levelOrder,
+    inOrder,
+    preOrder,
+    postOrder,
+    height,
+    depth,
+    isBalanced,
+    rebalance,
+    prettyPrint,
+  };
 }
 
-let array = [1, 4, 23, 8, 3, 5, 7, 9, 67, 6345, 324].sort(function (a, b) {
-  return a - b;
-});
+function driverScript(BST) {
+  const randArray = () => {
+    const set = new Set();
+    const length = Math.floor(Math.random() * 100) + 1;
+    while (set.size < length) {
+      set.add(Math.floor(Math.random() * 100));
+    }
+    return Array.from(set);
+  };
 
-console.log(array);
+  const array = randArray().sort((a, b) => a - b);
+  console.log(array);
 
-BinarySearchTree(array);
+  const tree = BST(array);
+
+  tree.isBalanced();
+
+  tree.levelOrder();
+  tree.inOrder();
+  tree.preOrder();
+  tree.postOrder();
+
+  tree.insert(150);
+  tree.insert(120);
+  tree.insert(130);
+  tree.insert(140);
+
+  tree.isBalanced();
+
+  tree.rebalance();
+
+  tree.isBalanced();
+
+  tree.levelOrder();
+  tree.inOrder();
+  tree.preOrder();
+  tree.postOrder();
+}
+
+driverScript(BinarySearchTree);
